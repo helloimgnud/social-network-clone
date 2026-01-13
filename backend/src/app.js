@@ -25,8 +25,13 @@ app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 
 // CORS Configuration
+let origin = process.env.URL || 'http://localhost:3000';
+if (origin.endsWith('/')) {
+    origin = origin.slice(0, -1);
+}
+
 const corsOptions = {
-    origin: process.env.URL || 'http://localhost:3000',
+    origin: origin,
     credentials: true,
     optionsSuccessStatus: 200
 };
