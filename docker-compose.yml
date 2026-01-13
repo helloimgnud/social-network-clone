@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  backend:
+    build: 
+      context: ./backend
+    container_name: backend
+    restart: "no" # In dev, stop on error so you can read the crash logs
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    # This runs your nodemon script from package.json
+    command: npm run dev 
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./backend/package.json
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    restart: "no"
+    ports:
+      - "3000:5173"
+    env_file:
+      - ./frontend/.env
+    environment:
+      # These flags ensure Vite/React notice file changes inside a Docker volume
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    # Vite HMR works best with 'sync'
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./frontend/package.json
+    depends_on:
+      - backend

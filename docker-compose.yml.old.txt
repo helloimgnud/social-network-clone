@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    # Map Host Port 8000 -> Container Port 8000 (Matches your .env)
+    ports:
+      - "8000:8000"
+    # This loads your backend/.env variables into the container
+    env_file:
+      - ./backend/.env
+    # IMPORTANT: We removed the 'environment' section that was overriding your MONGO_URI
+    # We also removed 'depends_on: mongo' since you use Atlas.
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    # REMOVED volumes. The Nginx image contains the built files. 
+    # Mounting ./frontend:/app would hide the built files and break the site.

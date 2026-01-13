@@ -1,0 +1,14 @@
+# frontend/Dockerfile
+FROM node:18
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+# Vite usually runs on 5173 by default
+EXPOSE 5173 
+
+CMD ["npm", "run", "dev", "--", "--host"]
