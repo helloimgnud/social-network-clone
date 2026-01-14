@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
-app.use(cookieParser());
 
 
 const isAuthenticated = async (req, res, next) => {
